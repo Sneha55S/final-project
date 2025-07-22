@@ -10,6 +10,8 @@ class User {
 
     }
 
+    // The entire test() method should be removed from here.
+    /*
     public function test () {
       $db = db_connect();
       $statement = $db->prepare("select * from users;");
@@ -17,6 +19,7 @@ class User {
       $rows = $statement->fetch(PDO::FETCH_ASSOC);
       return $rows;
     }
+    */
 
     public function authenticate($username, $password) {
         $username = strtolower($username);

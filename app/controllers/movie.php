@@ -82,9 +82,12 @@ class Movie extends Controller {
 				$this->view('movie/results', $data);
 		}
 
+				// The entire review() method should be removed from here.
+				/*
 		public function review($movie_title = '', $rating = '') {		
 				// This method is not used in our current flow, can be left as is or removed.
 				header('Location: /movie');
 				die;
 		}
+				*/
 }
