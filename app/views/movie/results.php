@@ -1,4 +1,4 @@
-<?php require_once '../templates/headerPublic.php'?>
+<?php require_once 'app/views/templates/headerPublic.php'?>
 <main role="main" class="container">
     <div class="page-header" id="banner">
         <div class="row">
@@ -114,4 +114,4 @@
         </div>
     <?php endif; ?>
 </main>
-<?php require_once '../templates/footer.php' ?>
+<?php require_once 'app/views/templates/footer.php' ?>
