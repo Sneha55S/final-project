@@ -23,7 +23,7 @@
 							</div>
 					<?php endif; ?>
 
-			<form action="/movie/search" method="get" > <!-- Changed to GET method for search -->
+			<form action="/index.php?url=movie/search" method="get" > <!-- Changed to GET method for search -->
 			<fieldset>
 				<div class="form-group">
 					<label for="movie">Movie</label>

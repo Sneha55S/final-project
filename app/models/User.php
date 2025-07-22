@@ -24,7 +24,7 @@ class User {
             $_SESSION['auth'] = 1;
             $_SESSION['username'] = ucwords($username);
             unset($_SESSION['failedAuth']);
-            header('Location: /home'); // Re-enabled redirect
+            header('Location: /index.php?url=home'); // Re-enabled redirect
             die; // Re-enabled die
         } else {
             if(isset($_SESSION['failedAuth'])) {
@@ -32,7 +32,7 @@ class User {
             } else {
                 $_SESSION['failedAuth'] = 1;
             }
-            header('Location: /login'); // Re-enabled redirect
+            header('Location: /index.php?url=login'); // Re-enabled redirect
             die; // Re-enabled die
         }
     }
