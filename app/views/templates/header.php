@@ -1,6 +1,7 @@
 <?php
 if (!isset($_SESSION['auth'])) {
     header('Location: /login');
+    exit(); // Always exit after header redirect
 }
 ?>
 <!DOCTYPE html>
@@ -8,9 +9,9 @@ if (!isset($_SESSION['auth'])) {
     <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <link rel="icon" href="/favicon.png">
-        <title>MAP 202</title>
+        <title>Movie Rating</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
     </head>
@@ -27,7 +28,10 @@ if (!isset($_SESSION['auth'])) {
           <a class="nav-link active" aria-current="page" href="/home">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/about">About Me</a>
+          <a class="nav-link" href="/movie">Movies</a> <!-- Added link to movie search -->
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/secret">Secret Page</a> <!-- Added link to secret page -->
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -41,9 +45,10 @@ if (!isset($_SESSION['auth'])) {
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link disabled">Disabled</a>
+          <a class="nav-link" href="/logout">Logout</a> <!-- Added Logout link -->
         </li>
       </ul>
     </div>
   </div>
 </nav>
+<div class="container mt-4"> <!-- Added a container with margin-top for content -->
