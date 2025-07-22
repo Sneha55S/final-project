@@ -9,7 +9,17 @@ ini_set('session.gc_maxlifetime', 28800); // 8 hours
 ini_set('session.gc_probability', 1);
 ini_set('session.gc_divisor', 1);
 $sessionCookieExpireTime = 28800; // 8hrs
-session_set_cookie_params($sessionCookieExpireTime);
+// session_set_cookie_params($sessionCookieExpireTime);
+
+// Enhanced session cookie parameters
+session_set_cookie_params([
+    'lifetime' => $sessionCookieExpireTime,
+    'path' => '/',
+    'domain' => '', // Leave empty for current domain
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on', // Set to true if using HTTPS
+    'httponly' => true, // Prevents JavaScript access to the session cookie
+    'samesite' => 'Lax' // Helps mitigate CSRF attacks
+]);
 
 // 3. Start the session (only if not already started)
 if (session_status() === PHP_SESSION_NONE) {
