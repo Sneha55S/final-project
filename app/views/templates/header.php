@@ -18,7 +18,7 @@ if (!isset($_SESSION['auth'])) {
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">MAP202</a>
+    <a class="navbar-brand" href="#">Movie Rating</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -29,9 +29,6 @@ if (!isset($_SESSION['auth'])) {
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/movie">Movies</a> <!-- Added link to movie search -->
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/secret">Secret Page</a> <!-- Added link to secret page -->
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
