@@ -88,5 +88,3 @@ class Movie extends Controller {
 				die;
 		}
 }
-
-?>

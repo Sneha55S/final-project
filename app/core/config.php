@@ -40,4 +40,3 @@ if (!defined('GEMINI_KEY')) {
 // or define them here if they are truly global constants.
 // For now, I'll add them as constants for completeness, assuming they are in $_ENV.
 
-?>
