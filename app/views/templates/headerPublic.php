@@ -1,9 +1,10 @@
-    <?php
-    if (isset($_SESSION['auth']) == 1) {
-        header('Location: /home');
-        exit(); // Always exit after header redirect
-    }
-    ?>
+<?php
+if (isset($_SESSION['auth']) == 1) {
+    echo "DEBUG: headerPublic.php redirecting to /home because authenticated.<br>";
+    // header('Location: /home'); // Temporarily comment out
+    // exit(); // Temporarily comment out
+}
+?>
 
     <!DOCTYPE html>
     <html lang="en">

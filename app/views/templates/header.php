@@ -1,7 +1,8 @@
 <?php
 if (!isset($_SESSION['auth'])) {
-    header('Location: /login');
-    exit(); // Always exit after header redirect
+    echo "DEBUG: header.php redirecting to /login because not authenticated.<br>";
+    // header('Location: /login'); // Temporarily comment out
+    // exit(); // Temporarily comment out
 }
 ?>
 <!DOCTYPE html>

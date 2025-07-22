@@ -1,4 +1,4 @@
-	<?php require_once '../templates/headerPublic.php'?>
+	<?php require_once VIEWS . DS . 'templates' . DS . 'header.php' ?>
 	<main role="main" class="container">
 			<div class="page-header" id="banner">
 					<div class="row">
@@ -37,4 +37,4 @@
 	</div>
 		<br>
 	</main>
-	<?php require_once '../templates/footer.php' ?>
+<?php require_once VIEWS . DS . 'templates' . DS . 'footer.php' ?>
