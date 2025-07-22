@@ -17,7 +17,7 @@ class Api {
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL, $query_url);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+				// Removed: curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enabled SSL verification by removing this line
 
 				$json = curl_exec($ch);
 				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -68,7 +68,7 @@ class Api {
 				curl_setopt($ch, CURLOPT_POST, true);
 				curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-				// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+				// Removed: curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enabled SSL verification by removing this line
 
 				$response = curl_exec($ch);
 				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
