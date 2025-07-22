@@ -36,6 +36,8 @@ class Home extends Controller {
 			echo "<pre>";
       echo $response;
       die;
+
+        // $this->view('home/index', ['user_data' => $data]);
     }
 
 }
