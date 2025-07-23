@@ -31,42 +31,66 @@ class Movie extends Controller {
 										$averageRating = $ratingModel->getAverageRating($movie['imdbID']);
 										$allReviews = $ratingModel->getAllReviewsForMovie($movie['imdbID']); // Fetch all reviews
 
-										// Only fetch user's rating if logged in
+										// Always fetch user's current saved rating/review if logged in
 										if (isset($_SESSION['auth'])) {
 												$userRating = $ratingModel->getUserRatingForMovie($userIdentifier, $movie['imdbID']);
 										}
 
-										// Only process rating submission if user is authenticated
-										if (isset($_SESSION['auth']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rating'])) {
-														$ratingValue = (int)($_POST['rating'] ?? 0);
-														$reviewText = trim($_POST['review_text'] ?? ''); // Get the new review text
-														$imdbId = $movie['imdbID'];
-														$posterUrl = $movie['Poster'] !== 'N/A' ? $movie['Poster'] : null;
+										// --- Handle POST Requests ---
+										if (isset($_SESSION['auth']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+												$ratingValue = (int)($_POST['rating'] ?? 0);
+												$imdbId = $movie['imdbID'];
+												$posterUrl = $movie['Poster'] !== 'N/A' ? $movie['Poster'] : null;
+												$moviePlot = $movie['Plot'];
 
-														if (filter_var($ratingValue, FILTER_VALIDATE_INT) && $ratingValue >= 1 && $ratingValue <= 5) {
-																		// Pass reviewText to saveRating
-																		if ($ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $reviewText)) {
-																						$_SESSION['message'] = ['type' => 'success', 'text' => 'Your rating and review have been saved!'];
-																						$averageRating = $ratingModel->getAverageRating($imdbId); // Recalculate average after new rating
-																						$aiReview = $api->generate_ai_review($movie['Title'], $movie['Plot'], $ratingValue);
-																						$_SESSION['ai_review'] = $aiReview; // Store AI review in session to display after redirect
-																		} else {
-																						$_SESSION['message'] = ['type' => 'error', 'text' => 'Could not save your rating and review.'];
-																		}
-														} else {
-																		$_SESSION['message'] = ['type' => 'warning', 'text' => 'Please select a valid rating (1-5 stars).'];
-														}
-														// Redirect to prevent form resubmission on refresh
+												// Validate rating value for both actions
+												if (!filter_var($ratingValue, FILTER_VALIDATE_INT) || $ratingValue < 1 || $ratingValue > 5) {
+														$_SESSION['message'] = ['type' => 'warning', 'text' => 'Please select a valid rating (1-5 stars).'];
 														header('Location: /movie/search?movie=' . urlencode($movie_title)); 
 														die;
+												}
+
+												if (isset($_POST['submit_get_ai_review'])) { // Action: Get AI Review
+														// Generate AI review
+														$aiReview = $api->generate_ai_review($movie['Title'], $moviePlot, $ratingValue);
+														$_SESSION['ai_review_for_movie_' . $imdbId] = $aiReview; // Store AI review
+														$_SESSION['ai_rating_for_movie_' . $imdbId] = $ratingValue; // Store rating used for AI
+														$_SESSION['message'] = ['type' => 'info', 'text' => 'AI review generated! You can now edit and post it.'];
+
+														// Save the rating immediately, but not the review text yet
+														$ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $userRating['review_text'] ?? null);
+
+												} elseif (isset($_POST['post_review'])) { // Action: Post/Update Review
+														$reviewText = trim($_POST['review_text'] ?? '');
+
+														if ($ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $reviewText)) {
+																$_SESSION['message'] = ['type' => 'success', 'text' => 'Your rating and review have been saved!'];
+																// Clear AI review from session after saving
+																unset($_SESSION['ai_review_for_movie_' . $imdbId]);
+																unset($_SESSION['ai_rating_for_movie_' . $imdbId]);
+														} else {
+																$_SESSION['message'] = ['type' => 'error', 'text' => 'Could not save your rating and review.'];
+														}
+												}
+												// Always redirect after POST
+												header('Location: /movie/search?movie=' . urlencode($movie_title)); 
+												die;
 										}
 
-										// Retrieve AI review from session if it was just generated
-										$aiReview = $_SESSION['ai_review'] ?? null;
+										// After POST, or on initial GET, retrieve AI review from session if it exists
+										$aiReview = $_SESSION['ai_review_for_movie_' . $movie['imdbID']] ?? null;
+
+										// If an AI review was just generated, override userRating's review_text for display
+										if ($aiReview && (!isset($userRating['review_text']) || empty($userRating['review_text']))) {
+												$userRating['review_text'] = $aiReview;
+												// Also ensure the rating used for AI is pre-selected if no saved rating
+												if (!isset($userRating['rating'])) {
+														$userRating['rating'] = $_SESSION['ai_rating_for_movie_' . $movie['imdbID']] ?? 0;
+												}
+										}
 
 						} else {
 										// Movie not found or API error
-										// FIX: Corrected assignment syntax here
 										$_SESSION['message'] = ['type' => 'error', 'text' => $movie['Error'] ?? 'Movie not found.']; 
 										header('Location: /movie'); // Redirect back to search page
 										die;
@@ -75,16 +99,15 @@ class Movie extends Controller {
 						$data = [
 										'movie' => $movie,
 										'average_rating' => $averageRating,
-										'user_identifier' => $userIdentifier, // Pass the determined identifier to the view
-										'user_rating' => $userRating, // Pass the user's specific rating
-										'all_reviews' => $allReviews, // Pass all reviews for the movie
-										'ai_review' => $aiReview,
+										'user_identifier' => $userIdentifier,
+										'user_rating' => $userRating, // This now contains user's saved rating OR AI-generated review
+										'all_reviews' => $allReviews,
 										'message' => $_SESSION['message'] ?? null
 						];
 
-						// Clear session messages and AI review after displaying them
+						// Clear general message after displaying
 						unset($_SESSION['message']);
-						unset($_SESSION['ai_review']);
+						// AI review specific session data is cleared after saving, or remains for display
 
 						$this->view('movie/results', $data);
 		}

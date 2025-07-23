@@ -52,7 +52,7 @@
                 <?php if (isset($_SESSION['auth'])): // Only show rating form if logged in ?>
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Give Your Rating & Review</h5>
+                        <h5 class="card-title">Your Rating & Review</h5>
                         <form method="POST" action="/movie/search?movie=<?php echo urlencode($data['movie']['Title']); ?>" class="row g-3 align-items-center">
                             <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID']); ?>">
                             <input type="hidden" name="movie_title" value="<?php echo htmlspecialchars($data['movie']['Title']); ?>">
@@ -61,22 +61,32 @@
 
                             <div class="col-12 mb-3">
                                 <label class="form-label d-block">Your Rating:</label>
+                                <?php $user_current_rating = $data['user_rating']['rating'] ?? 0; ?>
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="rating" id="rating<?php echo $i; ?>" value="<?php echo $i; ?>"
-                                            <?php echo (isset($data['user_rating']['rating']) && $data['user_rating']['rating'] == $i) ? 'checked' : ''; ?> required>
+                                            <?php echo ($user_current_rating == $i) ? 'checked' : ''; ?> required>
                                         <label class="form-check-label" for="rating<?php echo $i; ?>"><?php echo str_repeat('⭐', $i); ?></label>
                                     </div>
                                 <?php endfor; ?>
                             </div>
                             
                             <div class="col-12 mb-3">
-                                <label for="review_text" class="form-label">Your Review (Optional):</label>
-                                <textarea class="form-control" id="review_text" name="review_text" rows="3" placeholder="Write your review here..."><?php echo htmlspecialchars($data['user_rating']['review_text'] ?? ''); ?></textarea>
+                                <label for="review_text" class="form-label">Your Review:</label>
+                                <textarea class="form-control" id="review_text" name="review_text" rows="5" placeholder="Write your review here or get an AI-generated one..."
+                                    <?php echo (empty($data['user_rating']['rating']) && empty($data['user_rating']['review_text']) && empty($data['ai_review'])) ? 'readonly' : ''; ?>
+                                ><?php echo htmlspecialchars($data['user_rating']['review_text'] ?? $data['ai_review'] ?? ''); ?></textarea>
                             </div>
 
-                            <div class="col-12">
-                                <button type="submit" name="submit_rating" class="btn btn-success">Submit Rating & Get AI Review</button>
+                            <div class="col-12 d-flex flex-column gap-2">
+                                <button type="submit" name="submit_get_ai_review" id="submit_get_ai_review_button" class="btn btn-success">
+                                    Submit Rating & Get AI Review
+                                </button>
+                                <?php if (!empty($data['user_rating']['rating']) || !empty($data['ai_review'])): // Show Post Review button if rating exists or AI review is generated ?>
+                                <button type="submit" name="post_review" id="post_review_button" class="btn btn-primary">
+                                    Post Review
+                                </button>
+                                <?php endif; ?>
                             </div>
                         </form>
                     </div>
@@ -86,19 +96,6 @@
                         Please <a href="/login" class="alert-link">log in</a> to submit a rating and write a review.
                     </div>
                 <?php endif; ?>
-
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">AI-Generated Review</h5>
-                        <?php if (isset($data['ai_review'])): ?>
-                            <div class="alert alert-secondary" role="alert">
-                                <p><?php echo nl2br(htmlspecialchars($data['ai_review'])); ?></p>
-                            </div>
-                        <?php else: ?>
-                            <p class="text-muted">Submit a rating to get an AI-generated review!</p>
-                        <?php endif; ?>
-                    </div>
-                </div>
 
                 <!-- Section to display all user reviews -->
                 <div class="card mb-3">
@@ -142,4 +139,48 @@
         </div>
     <?php endif; ?>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ratingRadios = document.querySelectorAll('input[name="rating"]');
+    const reviewTextarea = document.getElementById('review_text');
+    const getAiReviewButton = document.getElementById('submit_get_ai_review_button');
+    const postReviewButton = document.getElementById('post_review_button'); // This might be null initially
+
+    // Function to update textarea and button state
+    function updateReviewUI() {
+        let isRatingSelected = false;
+        ratingRadios.forEach(radio => {
+            if (radio.checked) {
+                isRatingSelected = true;
+            }
+        });
+
+        // Enable textarea if a rating is selected OR if it already has content (from saved review or AI)
+        if (isRatingSelected || reviewTextarea.value.trim() !== '') {
+            reviewTextarea.removeAttribute('readonly');
+        } else {
+            reviewTextarea.setAttribute('readonly', 'readonly');
+        }
+
+        // The "Post Review" button is now controlled by PHP rendering logic
+        // based on whether a review exists or AI review was just generated.
+        // We only need to ensure the "Get AI Review" button is enabled if a rating is selected.
+        if (isRatingSelected) {
+            getAiReviewButton.removeAttribute('disabled');
+        } else {
+            getAiReviewButton.setAttribute('disabled', 'disabled');
+        }
+    }
+
+    // Add event listeners to rating radios
+    ratingRadios.forEach(radio => {
+        radio.addEventListener('change', updateReviewUI);
+    });
+
+    // Initial UI update on page load
+    updateReviewUI();
+});
+</script>
+
 <?php require_once VIEWS . DS . 'templates' . DS . 'footer.php' ?>
