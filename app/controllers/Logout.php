@@ -25,9 +25,9 @@ class Logout extends Controller {
             );
         }
 
-        session_destroy(); // Destroy the session on the server
+        session_destroy(); 
 
-        header('Location: /login'); // Changed to clean URL
-        exit(); // Crucial: Terminate script execution after redirect
+        header('Location: /login');
+        exit(); 
     }
 }
