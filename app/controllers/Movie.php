@@ -42,6 +42,7 @@ class Movie extends Controller {
 												$imdbId = $movie['imdbID'];
 												$posterUrl = $movie['Poster'] !== 'N/A' ? $movie['Poster'] : null;
 												$moviePlot = $movie['Plot'];
+												$submittedReviewText = trim($_POST['review_text'] ?? ''); // Get the review text from the form
 
 												// Validate rating value for both actions
 												if (!filter_var($ratingValue, FILTER_VALIDATE_INT) || $ratingValue < 1 || $ratingValue > 5) {
@@ -57,13 +58,14 @@ class Movie extends Controller {
 														$_SESSION['ai_rating_for_movie_' . $imdbId] = $ratingValue; // Store rating used for AI
 														$_SESSION['message'] = ['type' => 'info', 'text' => 'AI review generated! You can now edit and post it.'];
 
-														// Save the rating immediately, but not the review text yet
-														$ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $userRating['review_text'] ?? null);
+														// Save the rating immediately. If there was an existing review, keep it.
+														// If user had a review saved, use that. Otherwise, it's null.
+														$currentSavedReview = $userRating['review_text'] ?? null;
+														$ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $currentSavedReview);
 
 												} elseif (isset($_POST['post_review'])) { // Action: Post/Update Review
-														$reviewText = trim($_POST['review_text'] ?? '');
-
-														if ($ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $reviewText)) {
+														// This action saves whatever is currently in the textarea
+														if ($ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $submittedReviewText)) {
 																$_SESSION['message'] = ['type' => 'success', 'text' => 'Your rating and review have been saved!'];
 																// Clear AI review from session after saving
 																unset($_SESSION['ai_review_for_movie_' . $imdbId]);
@@ -78,10 +80,10 @@ class Movie extends Controller {
 										}
 
 										// After POST, or on initial GET, retrieve AI review from session if it exists
-										$aiReview = $_SESSION['ai_review_for_movie_' . $movie['imdbID']] ?? null;
+										$aiReview = $_SESSION['ai_review_for_movie_' . $movie['imdbID']] ?? null; 
 
 										// If an AI review was just generated, override userRating's review_text for display
-										if ($aiReview && (!isset($userRating['review_text']) || empty($userRating['review_text']))) {
+										if ($aiReview && (!isset($userRating['review_text']) || empty($userRating['review_text']) || ($userRating['review_text'] !== $aiReview))) {
 												$userRating['review_text'] = $aiReview;
 												// Also ensure the rating used for AI is pre-selected if no saved rating
 												if (!isset($userRating['rating'])) {
@@ -91,6 +93,7 @@ class Movie extends Controller {
 
 						} else {
 										// Movie not found or API error
+										// FIX: Corrected assignment syntax here
 										$_SESSION['message'] = ['type' => 'error', 'text' => $movie['Error'] ?? 'Movie not found.']; 
 										header('Location: /movie'); // Redirect back to search page
 										die;

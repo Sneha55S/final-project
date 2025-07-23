@@ -1,13 +1,31 @@
-<footer class="footer mt-auto py-3 bg-light">    
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <p class="text-muted">Copyright &copy; <?php echo date('Y'); ?> </p>
-            </div>
-        </div>
-    </div>
+</div> <!-- Close container -->
+<footer class="text-center py-3" style="border-top: 1px solid #34495e; background-color: #2c3e50; position: fixed; bottom: 0; width: 100%; z-index: 1020;">
+    <p class="mb-0 small" style="color: #ecf0f1;">
+        Cine Review &copy; <?= date("Y"); ?> | <span id="live-datetime"></span>
+    </p>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script>
+    // JavaScript for live date and time in the footer
+    function updateLiveDateTime() {
+        const now = new Date();
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true // Use 12-hour format with AM/PM
+        };
+        const dateTimeString = now.toLocaleDateString('en-US', options);
+        document.getElementById('live-datetime').textContent = dateTimeString;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    // Update immediately on load
+    updateLiveDateTime();
+    // Update every second
+    setInterval(updateLiveDateTime, 1000);
+</script>
 </body>
 </html>
