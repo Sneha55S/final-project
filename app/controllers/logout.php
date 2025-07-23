@@ -19,7 +19,7 @@ class Logout extends Controller {
 
         session_destroy(); // Destroy the session on the server
 
-        header('Location: /login'); // Redirect to the login page
+        header('Location: /index.php?url=login'); // Redirect to the login page
         exit(); // Crucial: Terminate script execution after redirect
     }
 }

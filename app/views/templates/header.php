@@ -1,20 +1,25 @@
   <?php // This must be the absolute first thing in the file, no character before it!
 
-  // Get the current URI path for conditional redirects
-  $current_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+  // Get the 'url' parameter from GET, which App.php uses for routing
+  $requested_url_param = $_GET['url'] ?? '';
 
-  // CONDITION 1: If user is NOT authenticated AND they are trying to access a page that is NOT the login page or the root URL.
+  // Convert the requested URL parameter into a simple path for comparison
+  $current_route = explode('/', filter_var(trim($requested_url_param, '/'), FILTER_SANITIZE_URL));
+  $current_controller = $current_route[0] ?? '';
+
+  // CONDITION 1: If user is NOT authenticated AND they are trying to access a page that is NOT the login page.
   // This prevents unauthenticated users from accessing protected pages.
   // It also prevents an infinite redirect loop on the login page itself.
-  if (!isset($_SESSION['auth']) && $current_uri !== '/login' && $current_uri !== '/') {
-      header('Location: /login');
+  // The login page is handled by 'login' controller or the root URL.
+  if (!isset($_SESSION['auth']) && $current_controller !== 'login' && $current_controller !== '') {
+      header('Location: /index.php?url=login');
       exit(); // Crucial: Terminate script execution after redirect
   }
 
   // CONDITION 2: If user IS authenticated AND they are trying to access the login page or the root URL.
   // This prevents authenticated users from seeing the login page again.
-  if (isset($_SESSION['auth']) && ($current_uri === '/login' || $current_uri === '/')) {
-      header('Location: /home');
+  if (isset($_SESSION['auth']) && ($current_controller === 'login' || $current_controller === '')) {
+      header('Location: /index.php?url=home');
       exit(); // Crucial: Terminate script execution after redirect
   }
   ?>
