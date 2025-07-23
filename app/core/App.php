@@ -9,14 +9,13 @@ class App {
     public function __construct() {
         $url = $this->parseUrl();
 
-        // Default to 'home' if URL is empty or first element is not a valid controller
         if (empty($url[0])) {
             $this->controller = 'home';
         } elseif (file_exists(APPS . DS . 'controllers' . DS . ucfirst($url[0]) . '.php')) {
             $this->controller = ucfirst($url[0]);
             unset($url[0]);
         } else {
-            $this->controller = 'home'; // Fallback to home if controller doesn't exist
+            $this->controller = 'home';
         }
 
         require_once APPS . DS . 'controllers' . DS . $this->controller . '.php';
@@ -28,7 +27,6 @@ class App {
                 $this->method = $url[1];
                 unset($url[1]);
             } else {
-                // Method not found, default to index
                 $this->method = 'index';
             }
         }
@@ -39,16 +37,27 @@ class App {
     }
 
     public function parseUrl() {
-        // This method now *expects* the 'url' GET parameter to be set.
-        // All internal links and form actions will be updated to provide it.
-        if (isset($_GET['url'])) {
-            $path = $_GET['url'];
-        } else {
-            // Fallback for root access or direct index.php access without 'url' param
-            $path = ''; 
+        $path = '';
+        if (isset($_SERVER['REQUEST_URI'])) {
+            $request_uri = $_SERVER['REQUEST_URI'];
+
+            $query_string = parse_url($request_uri, PHP_URL_QUERY);
+
+            $params = [];
+            if ($query_string) {
+                parse_str($query_string, $params);
+            }
+
+            if (isset($params['url'])) {
+                $path = $params['url'];
+            } else {
+                $uri_path = parse_url($request_uri, PHP_URL_PATH);
+                if ($uri_path !== '/' && $uri_path !== '/index.php') {
+                    $path = str_replace('/index.php', '', $uri_path);
+                }
+            }
         }
 
-        // Clean up the path: trim slashes, filter, explode
         $path = filter_var(trim($path, '/'), FILTER_SANITIZE_URL);
         return explode('/', $path);
     }

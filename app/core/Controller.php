@@ -2,16 +2,14 @@
 
 class Controller {
 
-    public function model ($model) {
-        // Use the MODELS constant for consistency and correct path resolution
-        require_once MODELS . DS . $model . '.php';
+    protected function model($model) {
+        require_once '../app/models/' . $model . '.php';
         return new $model();
     }
 
-    public function view ($view, $data = []) {
-        // Use the VIEWS constant for consistency and correct path resolution
-        // This ensures it always looks from the project root's app/views/ directory
-        require_once VIEWS . DS . $view .'.php';
+    protected function view($view, $data = []) {
+        require_once '../app/views/templates/header.php'; // Header is always included
+        require_once '../app/views/' . $view . '.php';
+        require_once '../app/views/templates/footer.php'; // Footer is always included
     }
-
 }

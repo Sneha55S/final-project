@@ -1,4 +1,4 @@
-	<?php require_once VIEWS . DS . 'templates' . DS . 'header.php' ?>
+<?php require_once VIEWS . DS . 'templates' . DS . 'header.php' ?>
 	<main role="main" class="container">
 			<div class="page-header" id="banner">
 					<div class="row">
@@ -10,11 +10,10 @@
 
 	<div class="row">
 			<div class="col-sm-auto">
-					<!-- Display any flash messages from the session -->
 					<?php
 					if (isset($_SESSION['message'])):
 							$message = $_SESSION['message'];
-							unset($_SESSION['message']); // Clear the message after displaying
+							unset($_SESSION['message']);
 					?>
 							<div class="alert alert-<?php echo $message['type'] === 'success' ? 'success' : ($message['type'] === 'error' ? 'danger' : 'warning'); ?> alert-dismissible fade show" role="alert">
 									<strong><?php echo ucfirst($message['type']); ?>!</strong>
@@ -23,7 +22,7 @@
 							</div>
 					<?php endif; ?>
 
-			<form action="/index.php?url=movie/search" method="get" > <!-- Changed to GET method for search -->
+			<form action="/index.php?url=movie/search" method="get" >
 			<fieldset>
 				<div class="form-group">
 					<label for="movie">Movie</label>
@@ -32,7 +31,7 @@
 							<br>
 					<button type="submit" class="btn btn-primary">Search</button>
 			</fieldset>
-			</form> 
+			</form>
 		</div>
 	</div>
 		<br>

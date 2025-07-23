@@ -3,7 +3,6 @@
     <div class="page-header" id="banner">
         <div class="row">
             <div class="col-lg-12">
-                <!-- Display "Hi, [Username]" -->
                 <h1 class="mb-1">Hi, <?php echo htmlspecialchars($_SESSION['username'] ?? 'Guest'); ?>!</h1>
                 <p class="lead mb-4"> <?= date("F jS, Y"); ?></p>
             </div>

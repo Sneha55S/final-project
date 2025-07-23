@@ -8,7 +8,6 @@
         </div>
     </div>
 
-    <!-- Display any flash messages from the session -->
     <?php
     if (isset($data['message'])):
         $message = $data['message'];
@@ -36,7 +35,6 @@
                 <p><strong>Plot:</strong> <?php echo htmlspecialchars($data['movie']['Plot']); ?></p>
                 <hr>
 
-                <!-- Average Rating Display -->
                 <div class="card bg-light mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Community Ratings</h5>
@@ -47,7 +45,6 @@
                     </div>
                 </div>
 
-                <!-- Give a Rating Form with Stars -->
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Give Your Rating (1-5 Stars)</h5>
@@ -55,7 +52,7 @@
                             <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID']); ?>">
                             <input type="hidden" name="movie_title" value="<?php echo htmlspecialchars($data['movie']['Title']); ?>">
                             <input type="hidden" name="poster_url" value="<?php echo htmlspecialchars($data['movie']['Poster'] !== 'N/A' ? $data['movie']['Poster'] : ''); ?>">
-                            <input type="hidden" name="movie_plot" value="<?php echo htmlspecialchars($data['movie']['Plot']); ?>"> <!-- Pass plot for AI -->
+                            <input type="hidden" name="movie_plot" value="<?php echo htmlspecialchars($data['movie']['Plot']); ?>">
 
                             <div class="col-auto">
                                 <div class="form-check form-check-inline">
@@ -86,7 +83,6 @@
                     </div>
                 </div>
 
-                <!-- AI Review Section -->
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">AI-Generated Review</h5>
