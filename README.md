@@ -1,4 +1,5 @@
-✨ Cine Review: Your Gateway to Cinematic Insights ✨
+✨ Cine Review: Your Movie Reviews ✨
+
 🎬 Project Overview
 Cine Review is a dynamic web application for movie enthusiasts. It allows users to search for films, view detailed information, explore community ratings, and for logged-in members, to contribute their own ratings and AI-assisted reviews. Built with a clean, minimalistic design, it showcases core web development principles and API integrations.
 
@@ -34,9 +35,8 @@ Frontend: HTML5, CSS3, JavaScript, Bootstrap 5
 
 APIs: OMDB API, Google Gemini API
 
-Deployment: Optimized for PaaS like Render (with PlanetScale for MySQL).
-
 🚧 Development Journey: Challenges & Solutions
+
 Building Cine Review involved overcoming several key hurdles:
 
 Replit Environment Issues: Persistent PHP "command not found" errors and file casing problems were resolved by explicit Nix configurations and targeted code workarounds.
