@@ -14,11 +14,12 @@
             <p class="mb-2">Welcome to your movie hub.</p>
             <ul class="mb-4">
                 <li><a href="/movie">Search for movies</a> (available to everyone)</li>
+                <li>View community ratings and AI-generated reviews (available to everyone)</li>
                 <?php if (isset($_SESSION['auth'])): ?>
-                    <li>Give ratings (1-5 stars)</li>
-                    <li>Get AI-generated reviews based on your rating</li>
+                    <li>Give your own ratings (1-5 stars)</li>
+                    <li>Get personalized AI-generated reviews based on your rating</li>
                 <?php else: ?>
-                    <li><a href="/login">Log in</a> to give ratings and get AI-generated reviews.</li>
+                    <li><a href="/login">Log in</a> or <a href="/register">Sign up</a> to give ratings and get personalized AI-generated reviews.</li>
                 <?php endif; ?>
             </ul>
             <p class="mt-4">
