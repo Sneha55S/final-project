@@ -26,7 +26,11 @@
                      class="img-fluid rounded shadow-sm mb-3" alt="<?php echo htmlspecialchars($data['movie']['Title']); ?> Poster">
                 <h2 class="h3"><?php echo htmlspecialchars($data['movie']['Title']); ?> (<?php echo htmlspecialchars($data['movie']['Year']); ?>)</h2>
                 <p class="text-muted"><?php echo htmlspecialchars($data['movie']['Rated']); ?> | <?php echo htmlspecialchars($data['movie']['Runtime']); ?></p>
-                <p>Your User ID: <code><?php echo htmlspecialchars($data['user_identifier']); ?></code></p>
+                <?php if (isset($_SESSION['auth'])): // Only show user ID if logged in ?>
+                    <p>Your User ID: <code><?php echo htmlspecialchars($_SESSION['username']); ?></code></p>
+                <?php else: ?>
+                    <p>You are browsing as a guest.</p>
+                <?php endif; ?>
             </div>
             <div class="col-md-8">
                 <p><strong>Genre:</strong> <?php echo htmlspecialchars($data['movie']['Genre']); ?></p>
@@ -45,10 +49,11 @@
                     </div>
                 </div>
 
+                <?php if (isset($_SESSION['auth'])): // Only show rating form if logged in ?>
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Give Your Rating (1-5 Stars)</h5>
-                        <form method="POST" action="/movie/search?movie=<?php echo urlencode($data['movie']['Title']); ?>" class="row g-3 align-items-center"> <!-- Changed to clean URL -->
+                        <form method="POST" action="/movie/search?movie=<?php echo urlencode($data['movie']['Title']); ?>" class="row g-3 align-items-center">
                             <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID']); ?>">
                             <input type="hidden" name="movie_title" value="<?php echo htmlspecialchars($data['movie']['Title']); ?>">
                             <input type="hidden" name="poster_url" value="<?php echo htmlspecialchars($data['movie']['Poster'] !== 'N/A' ? $data['movie']['Poster'] : ''); ?>">
@@ -82,6 +87,11 @@
                         </form>
                     </div>
                 </div>
+                <?php else: // Message for guests ?>
+                    <div class="alert alert-info" role="alert">
+                        Please <a href="/login" class="alert-link">log in</a> to submit a rating and get an AI-generated review.
+                    </div>
+                <?php endif; ?>
 
                 <div class="card mb-3">
                     <div class="card-body">
@@ -100,7 +110,7 @@
         </div>
         <div class="row mt-4">
             <div class="col-12 text-center">
-                <a href="/movie" class="btn btn-secondary">&larr; Search Another Movie</a> <!-- Changed to clean URL -->
+                <a href="/movie" class="btn btn-secondary">&larr; Search Another Movie</a>
             </div>
         </div>
 
