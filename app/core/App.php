@@ -10,15 +10,19 @@ class App {
         $url = $this->parseUrl();
 
         // Determine the controller
-        // If URL is empty or first segment is not a valid controller file, default to 'home'
-        if (empty($url[0]) || !file_exists(APPS . DS . 'controllers' . DS . ucfirst($url[0]) . '.php')) {
-            $this->controller = 'home';
-        } else {
+        // Check if a controller segment exists in the URL and if its capitalized version exists as a file
+        if (!empty($url[0]) && file_exists(APPS . DS . 'controllers' . DS . ucfirst($url[0]) . '.php')) {
             $this->controller = ucfirst($url[0]);
             unset($url[0]); // Remove controller segment from URL array
+        } else {
+            // QUICK FIX FOR REPLIT CASING ISSUE:
+            // If URL is empty or the specific controller file (capitalized) is not found dynamically,
+            // we force the default controller to 'Home' (capitalized) assuming it exists.
+            $this->controller = 'Home'; 
         }
 
-        // Include the controller file
+        // Include the controller file using the determined (and potentially forced capitalized) name
+        // This line will now always try to load 'Home.php' if it's the default, or the correctly capitalized controller.
         require_once APPS . DS . 'controllers' . DS . $this->controller . '.php';
 
         // Instantiate the controller
