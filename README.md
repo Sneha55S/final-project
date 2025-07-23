@@ -1,5 +1,4 @@
-✨ Cine Review: Your Movie Reviews ✨
-
+✨ Cine Review: Movie Reviews ✨
 
 🎬 Project Overview
 Cine Review is a dynamic web application for movie enthusiasts. It allows users to search for films, view detailed information, explore community ratings, and for logged-in members, to contribute their own ratings and AI-assisted reviews. Built with a clean, minimalistic design, it showcases core web development principles and API integrations.
