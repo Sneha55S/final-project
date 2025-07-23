@@ -52,44 +52,38 @@
                 <?php if (isset($_SESSION['auth'])): // Only show rating form if logged in ?>
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Give Your Rating (1-5 Stars)</h5>
+                        <h5 class="card-title">Give Your Rating & Review</h5>
                         <form method="POST" action="/movie/search?movie=<?php echo urlencode($data['movie']['Title']); ?>" class="row g-3 align-items-center">
                             <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID']); ?>">
                             <input type="hidden" name="movie_title" value="<?php echo htmlspecialchars($data['movie']['Title']); ?>">
                             <input type="hidden" name="poster_url" value="<?php echo htmlspecialchars($data['movie']['Poster'] !== 'N/A' ? $data['movie']['Poster'] : ''); ?>">
                             <input type="hidden" name="movie_plot" value="<?php echo htmlspecialchars($data['movie']['Plot']); ?>">
 
-                            <div class="col-auto">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating1" value="1" required>
-                                    <label class="form-check-label" for="rating1">⭐</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating2" value="2">
-                                    <label class="form-check-label" for="rating2">⭐⭐</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating3" value="3">
-                                    <label class="form-check-label" for="rating3">⭐⭐⭐</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating4" value="4">
-                                    <label class="form-check-label" for="rating4">⭐⭐⭐⭐</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating5" value="5">
-                                    <label class="form-check-label" for="rating5">⭐⭐⭐⭐⭐</label>
-                                </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label d-block">Your Rating:</label>
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="rating" id="rating<?php echo $i; ?>" value="<?php echo $i; ?>"
+                                            <?php echo (isset($data['user_rating']['rating']) && $data['user_rating']['rating'] == $i) ? 'checked' : ''; ?> required>
+                                        <label class="form-check-label" for="rating<?php echo $i; ?>"><?php echo str_repeat('⭐', $i); ?></label>
+                                    </div>
+                                <?php endfor; ?>
                             </div>
-                            <div class="col-auto">
-                                <button type="submit" name="submit_rating" class="btn btn-success">Submit Rating & Get Review</button>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="review_text" class="form-label">Your Review (Optional):</label>
+                                <textarea class="form-control" id="review_text" name="review_text" rows="3" placeholder="Write your review here..."><?php echo htmlspecialchars($data['user_rating']['review_text'] ?? ''); ?></textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" name="submit_rating" class="btn btn-success">Submit Rating & Get AI Review</button>
                             </div>
                         </form>
                     </div>
                 </div>
                 <?php else: // Message for guests ?>
                     <div class="alert alert-info" role="alert">
-                        Please <a href="/login" class="alert-link">log in</a> to submit a rating and get an AI-generated review.
+                        Please <a href="/login" class="alert-link">log in</a> to submit a rating and write a review.
                     </div>
                 <?php endif; ?>
 
@@ -105,6 +99,34 @@
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- Section to display all user reviews -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">User Reviews</h5>
+                        <?php if (!empty($data['all_reviews'])): ?>
+                            <?php foreach ($data['all_reviews'] as $review): ?>
+                                <div class="card mb-2 bg-light">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-subtitle mb-1 text-muted">
+                                            <strong><?php echo htmlspecialchars($review['user_identifier']); ?></strong> rated
+                                            <?php echo str_repeat('⭐', $review['rating']); ?>
+                                            on <?php echo date('M j, Y', strtotime($review['created_at'])); ?>
+                                        </h6>
+                                        <?php if (!empty($review['review_text'])): ?>
+                                            <p class="card-text"><?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
+                                        <?php else: ?>
+                                            <p class="card-text text-muted">No text review provided.</p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="text-muted">No user reviews yet. Be the first to add one!</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <!-- End User Reviews Section -->
 
             </div>
         </div>

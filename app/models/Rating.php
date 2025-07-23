@@ -2,88 +2,90 @@
 
 class Rating {
 
-    /**
-     * Saves a movie rating to the database.
-     * Inserts the movie if it doesn't exist, then inserts the rating.
-     * @param string $userIdentifier A unique identifier for the user (e.g., IP address or session ID).
-     * @param string $imdbId The IMDb ID of the movie.
-     * @param string $movieTitle The title of the movie.
-     * @param string|null $posterUrl The URL of the movie poster.
-     * @param int $rating The rating given by the user (1-5).
-     * @return bool True on success, false on failure.
-     */
-    public function saveRating($userIdentifier, $imdbId, $movieTitle, $posterUrl, $rating) {
+    // Modified to accept review_text
+    public function saveRating($userIdentifier, $imdbId, $movieTitle, $posterUrl, $ratingValue, $reviewText = null) {
         $db = db_connect();
-        $db->beginTransaction(); // Start a transaction for atomicity
-
         try {
-            // 1. Check if movie already exists in 'movies' table
-            $stmt = $db->prepare("SELECT id FROM movies WHERE imdb_id = :imdb_id");
-            $stmt->bindValue(':imdb_id', $imdbId);
-            $stmt->execute();
-            $movie = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Check if a rating from this user for this movie already exists
+            $statement = $db->prepare("SELECT id FROM ratings WHERE user_identifier = :user_identifier AND imdb_id = :imdb_id");
+            $statement->bindValue(':user_identifier', $userIdentifier);
+            $statement->bindValue(':imdb_id', $imdbId);
+            $statement->execute();
+            $existingRating = $statement->fetch(PDO::FETCH_ASSOC);
 
-            $movieId = null;
-            if ($movie) {
-                $movieId = $movie['id'];
+            if ($existingRating) {
+                // Update existing rating
+                $statement = $db->prepare("UPDATE ratings SET rating = :rating, review_text = :review_text, movie_title = :movie_title, poster_url = :poster_url, created_at = NOW() WHERE id = :id");
+                $statement->bindValue(':id', $existingRating['id']);
             } else {
-                // 2. If movie doesn't exist, insert it
-                $stmt = $db->prepare("INSERT INTO movies (imdb_id, title, poster_url) VALUES (:imdb_id, :title, :poster_url)");
-                $stmt->bindValue(':imdb_id', $imdbId);
-                $stmt->bindValue(':title', $movieTitle);
-                $stmt->bindValue(':poster_url', $posterUrl);
-                $stmt->execute();
-                $movieId = $db->lastInsertId(); // Get the ID of the newly inserted movie
+                // Insert new rating
+                $statement = $db->prepare("INSERT INTO ratings (user_identifier, imdb_id, movie_title, poster_url, rating, review_text, created_at) VALUES (:user_identifier, :imdb_id, :movie_title, :poster_url, :rating, :review_text, NOW())");
+                $statement->bindValue(':user_identifier', $userIdentifier);
+                $statement->bindValue(':imdb_id', $imdbId);
             }
 
-            if ($movieId) {
-                // 3. Insert the rating
-                $stmt = $db->prepare("INSERT INTO ratings (movie_id, user_identifier, rating) VALUES (:movie_id, :user_identifier, :rating)");
-                $stmt->bindValue(':movie_id', $movieId);
-                $stmt->bindValue(':user_identifier', $userIdentifier);
-                $stmt->bindValue(':rating', $rating);
-                $stmt->execute();
-                $db->commit(); // Commit the transaction
-                return true;
-            }
-
-            $db->rollBack(); // Rollback if movieId is null (shouldn't happen if logic is correct)
-            return false;
+            $statement->bindValue(':rating', $ratingValue);
+            $statement->bindValue(':review_text', $reviewText); // Bind the new review text
+            $statement->bindValue(':movie_title', $movieTitle);
+            $statement->bindValue(':poster_url', $posterUrl);
+            return $statement->execute();
 
         } catch (PDOException $e) {
-            $db->rollBack(); // Rollback on any error
-            error_log("Database Error in saveRating: " . $e->getMessage());
+            error_log("Database error saving rating: " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Retrieves the average rating and count for a given movie.
-     * @param string $imdbId The IMDb ID of the movie.
-     * @return array An associative array with 'average_rating' and 'rating_count'.
-     */
     public function getAverageRating($imdbId) {
         $db = db_connect();
         try {
-            $stmt = $db->prepare("
-                SELECT 
-                    COALESCE(AVG(r.rating), 0) AS average_rating, 
-                    COUNT(r.id) AS rating_count
-                FROM ratings r
-                JOIN movies m ON r.movie_id = m.id
-                WHERE m.imdb_id = :imdb_id
-            ");
-            $stmt->bindValue(':imdb_id', $imdbId);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $statement = $db->prepare("SELECT AVG(rating) as average_rating, COUNT(id) as rating_count FROM ratings WHERE imdb_id = :imdb_id");
+            $statement->bindValue(':imdb_id', $imdbId);
+            $statement->execute();
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-            // Format average_rating to one decimal place
-            $result['average_rating'] = number_format((float)$result['average_rating'], 1);
-
-            return $result;
-        } catch (PDOException $e) {
-            error_log("Database Error in getAverageRating: " . $e->getMessage());
+            if ($result && $result['rating_count'] > 0) {
+                return [
+                    'average_rating' => round($result['average_rating'], 1),
+                    'rating_count' => (int)$result['rating_count']
+                ];
+            }
             return ['average_rating' => 0, 'rating_count' => 0];
+
+        } catch (PDOException $e) {
+            error_log("Database error getting average rating: " . $e->getMessage());
+            return ['average_rating' => 0, 'rating_count' => 0];
+        }
+    }
+
+    // New method to get a specific user's rating for a movie
+    public function getUserRatingForMovie($userIdentifier, $imdbId) {
+        $db = db_connect();
+        try {
+            $statement = $db->prepare("SELECT rating, review_text FROM ratings WHERE user_identifier = :user_identifier AND imdb_id = :imdb_id LIMIT 1");
+            $statement->bindValue(':user_identifier', $userIdentifier);
+            $statement->bindValue(':imdb_id', $imdbId);
+            $statement->execute();
+            return $statement->fetch(PDO::FETCH_ASSOC); // Returns rating and review_text or false
+        } catch (PDOException $e) {
+            error_log("Database error getting user rating: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // New method to get all reviews for a movie
+    public function getAllReviewsForMovie($imdbId) {
+        $db = db_connect();
+        try {
+            // Note: We are not using ORDER BY to avoid potential index issues on some environments.
+            // Sorting can be done in PHP if necessary.
+            $statement = $db->prepare("SELECT user_identifier, rating, review_text, created_at FROM ratings WHERE imdb_id = :imdb_id AND review_text IS NOT NULL AND review_text != ''");
+            $statement->bindValue(':imdb_id', $imdbId);
+            $statement->execute();
+            return $statement->fetchAll(PDO::FETCH_ASSOC); // Returns all reviews
+        } catch (PDOException $e) {
+            error_log("Database error getting all reviews: " . $e->getMessage());
+            return [];
         }
     }
 }

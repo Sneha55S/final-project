@@ -21,27 +21,37 @@ class Movie extends Controller {
 
 						$aiReview = null;
 						$averageRating = ['average_rating' => 0, 'rating_count' => 0];
+						$userRating = null; // To store the current user's rating
+						$allReviews = []; // To store all reviews for the movie
 
 						// Determine user identifier: username if logged in, IP address if guest
 						$userIdentifier = isset($_SESSION['auth']) ? $_SESSION['username'] : ($_SERVER['REMOTE_ADDR'] ?? uniqid('guest_'));
 
 						if (isset($movie['Response']) && $movie['Response'] == 'True') {
 										$averageRating = $ratingModel->getAverageRating($movie['imdbID']);
+										$allReviews = $ratingModel->getAllReviewsForMovie($movie['imdbID']); // Fetch all reviews
+
+										// Only fetch user's rating if logged in
+										if (isset($_SESSION['auth'])) {
+												$userRating = $ratingModel->getUserRatingForMovie($userIdentifier, $movie['imdbID']);
+										}
 
 										// Only process rating submission if user is authenticated
 										if (isset($_SESSION['auth']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rating'])) {
 														$ratingValue = (int)($_POST['rating'] ?? 0);
+														$reviewText = trim($_POST['review_text'] ?? ''); // Get the new review text
 														$imdbId = $movie['imdbID'];
 														$posterUrl = $movie['Poster'] !== 'N/A' ? $movie['Poster'] : null;
 
 														if (filter_var($ratingValue, FILTER_VALIDATE_INT) && $ratingValue >= 1 && $ratingValue <= 5) {
-																		if ($ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue)) {
-																						$_SESSION['message'] = ['type' => 'success', 'text' => 'Your rating has been saved!'];
+																		// Pass reviewText to saveRating
+																		if ($ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $reviewText)) {
+																						$_SESSION['message'] = ['type' => 'success', 'text' => 'Your rating and review have been saved!'];
 																						$averageRating = $ratingModel->getAverageRating($imdbId); // Recalculate average after new rating
 																						$aiReview = $api->generate_ai_review($movie['Title'], $movie['Plot'], $ratingValue);
 																						$_SESSION['ai_review'] = $aiReview; // Store AI review in session to display after redirect
 																		} else {
-																						$_SESSION['message'] = ['type' => 'error', 'text' => 'Could not save your rating.'];
+																						$_SESSION['message'] = ['type' => 'error', 'text' => 'Could not save your rating and review.'];
 																		}
 														} else {
 																		$_SESSION['message'] = ['type' => 'warning', 'text' => 'Please select a valid rating (1-5 stars).'];
@@ -56,7 +66,8 @@ class Movie extends Controller {
 
 						} else {
 										// Movie not found or API error
-										$_SESSION['message'] = ['type' => 'error', 'text' => $movie['Error'] ?? 'Movie not found.'];
+										// FIX: Corrected assignment syntax here
+										$_SESSION['message'] = ['type' => 'error', 'text' => $movie['Error'] ?? 'Movie not found.']; 
 										header('Location: /movie'); // Redirect back to search page
 										die;
 						}
@@ -65,6 +76,8 @@ class Movie extends Controller {
 										'movie' => $movie,
 										'average_rating' => $averageRating,
 										'user_identifier' => $userIdentifier, // Pass the determined identifier to the view
+										'user_rating' => $userRating, // Pass the user's specific rating
+										'all_reviews' => $allReviews, // Pass all reviews for the movie
 										'ai_review' => $aiReview,
 										'message' => $_SESSION['message'] ?? null
 						];
