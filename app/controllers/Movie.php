@@ -22,9 +22,9 @@ class Movie extends Controller {
 						$aiReview = null;
 						$averageRating = ['average_rating' => 0, 'rating_count' => 0];
 						$userRating = null; 
-						$allReviews = []; // To store all reviews for the movie
+						$allReviews = []; 
 
-						// Determine user identifier: username if logged in, IP address if guest
+						
 						$userIdentifier = isset($_SESSION['auth']) ? $_SESSION['username'] : ($_SERVER['REMOTE_ADDR'] ?? uniqid('guest_'));
 
 						if (isset($movie['Response']) && $movie['Response'] == 'True') {
@@ -42,7 +42,7 @@ class Movie extends Controller {
 												$imdbId = $movie['imdbID'];
 												$posterUrl = $movie['Poster'] !== 'N/A' ? $movie['Poster'] : null;
 												$moviePlot = $movie['Plot'];
-												$submittedReviewText = trim($_POST['review_text'] ?? ''); // 
+												$submittedReviewText = trim($_POST['review_text'] ?? ''); 
 
 												
 												if (!filter_var($ratingValue, FILTER_VALIDATE_INT) || $ratingValue < 1 || $ratingValue > 5) {
@@ -51,7 +51,7 @@ class Movie extends Controller {
 														die;
 												}
 
-												if (isset($_POST['submit_get_ai_review'])) {  
+												if (isset($_POST['submit_get_ai_review'])) { 
 														
 														$aiReview = $api->generate_ai_review($movie['Title'], $moviePlot, $ratingValue);
 														$_SESSION['ai_review_for_movie_' . $imdbId] = $aiReview; 
@@ -60,10 +60,10 @@ class Movie extends Controller {
 
 														
 														
-														$currentSavedReview = $userRating['review_text'] ?? null
+														$currentSavedReview = $userRating['review_text'] ?? null;
 														$ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $currentSavedReview);
 
-												} elseif (isset($_POST['post_review'])) {  
+												} elseif (isset($_POST['post_review'])) { 
 														
 														if ($ratingModel->saveRating($userIdentifier, $imdbId, $movie_title, $posterUrl, $ratingValue, $submittedReviewText)) {
 																$_SESSION['message'] = ['type' => 'success', 'text' => 'Your rating and review have been saved!'];
@@ -103,13 +103,14 @@ class Movie extends Controller {
 										'movie' => $movie,
 										'average_rating' => $averageRating,
 										'user_identifier' => $userIdentifier,
-										'user_rating' => $userRating, 
+										'user_rating' => $userRating,  
 										'all_reviews' => $allReviews,
 										'message' => $_SESSION['message'] ?? null
 						];
 
-						unset($_SESSION['message']);
 						
+						unset($_SESSION['message']);
+
 
 						$this->view('movie/results', $data);
 		}
