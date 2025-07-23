@@ -11,17 +11,25 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <p class="mb-2">Welcome to your movie hub. You can now:</p>
+            <p class="mb-2">Welcome to your movie hub.</p>
             <ul class="mb-4">
-                <li><a href="/movie">Search for movies</a></li>
-                <li>Give ratings (1-5 stars)</li>
-                <li>Get AI-generated reviews based on your rating</li>
+                <li><a href="/movie">Search for movies</a> (available to everyone)</li>
+                <?php if (isset($_SESSION['auth'])): ?>
+                    <li>Give ratings (1-5 stars)</li>
+                    <li>Get AI-generated reviews based on your rating</li>
+                <?php else: ?>
+                    <li><a href="/login">Log in</a> to give ratings and get AI-generated reviews.</li>
+                <?php endif; ?>
             </ul>
             <p class="mt-4">
                 <a href="/movie" class="btn btn-primary">Go to Movie Search</a>
             </p>
             <p class="mt-2">
-                <a href="/logout" class="btn btn-secondary">Logout</a>
+                <?php if (isset($_SESSION['auth'])): ?>
+                    <a href="/logout" class="btn btn-secondary">Logout</a>
+                <?php else: ?>
+                    <a href="/login" class="btn btn-secondary">Login</a>
+                <?php endif; ?>
             </p>
         </div>
     </div>
