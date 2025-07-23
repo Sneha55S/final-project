@@ -22,7 +22,7 @@ class User {
             $_SESSION['auth'] = 1;
             $_SESSION['username'] = ucwords($username);
             unset($_SESSION['failedAuth']);
-            header('Location: /index.php?url=home');
+            header('Location: /home'); // Changed to clean URL
             die;
         } else {
             if(isset($_SESSION['failedAuth'])) {
@@ -30,7 +30,7 @@ class User {
             } else {
                 $_SESSION['failedAuth'] = 1;
             }
-            header('Location: /index.php?url=login');
+            header('Location: /login'); // Changed to clean URL
             die;
         }
     }

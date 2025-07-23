@@ -9,30 +9,35 @@ class App {
     public function __construct() {
         $url = $this->parseUrl();
 
-        if (empty($url[0])) {
+        // Determine the controller
+        // If URL is empty or first segment is not a valid controller file, default to 'home'
+        if (empty($url[0]) || !file_exists(APPS . DS . 'controllers' . DS . ucfirst($url[0]) . '.php')) {
             $this->controller = 'home';
-        } elseif (file_exists(APPS . DS . 'controllers' . DS . ucfirst($url[0]) . '.php')) {
-            $this->controller = ucfirst($url[0]);
-            unset($url[0]);
         } else {
-            $this->controller = 'home';
+            $this->controller = ucfirst($url[0]);
+            unset($url[0]); // Remove controller segment from URL array
         }
 
+        // Include the controller file
         require_once APPS . DS . 'controllers' . DS . $this->controller . '.php';
 
+        // Instantiate the controller
         $this->controller = new $this->controller;
 
-        if (isset($url[1])) {
-            if (method_exists($this->controller, $url[1])) {
-                $this->method = $url[1];
-                unset($url[1]);
-            } else {
-                $this->method = 'index';
-            }
+        // Determine the method
+        // If a second segment exists and is a valid method in the controller, use it
+        if (isset($url[1]) && method_exists($this->controller, $url[1])) {
+            $this->method = $url[1];
+            unset($url[1]); // Remove method segment from URL array
+        } else {
+            // Default to 'index' method if no method specified or method not found
+            $this->method = 'index';
         }
 
+        // Remaining URL segments are parameters
         $this->params = $url ? array_values($url) : [];
 
+        // Call the controller method with parameters
         call_user_func_array([$this->controller, $this->method], $this->params);
     }
 
@@ -41,24 +46,30 @@ class App {
         if (isset($_SERVER['REQUEST_URI'])) {
             $request_uri = $_SERVER['REQUEST_URI'];
 
-            $query_string = parse_url($request_uri, PHP_URL_QUERY);
+            // Remove the query string part (e.g., ?movie=Titanic)
+            $request_uri = strtok($request_uri, '?');
 
-            $params = [];
-            if ($query_string) {
-                parse_str($query_string, $params);
+            // Handle Replit's potential base path (e.g., /my-replit-name/ if not at root)
+            $script_name = $_SERVER['SCRIPT_NAME']; // e.g., /index.php
+            $base_path = dirname($script_name); // e.g., / or /my-replit-name
+
+            if ($base_path !== '/' && strpos($request_uri, $base_path) === 0) {
+                $request_uri = substr($request_uri, strlen($base_path));
             }
 
-            if (isset($params['url'])) {
-                $path = $params['url'];
-            } else {
-                $uri_path = parse_url($request_uri, PHP_URL_PATH);
-                if ($uri_path !== '/' && $uri_path !== '/index.php') {
-                    $path = str_replace('/index.php', '', $uri_path);
-                }
+            // Handle /index.php being part of the path (e.g., /index.php/login)
+            if (strpos($request_uri, '/index.php') === 0) {
+                $request_uri = substr($request_uri, strlen('/index.php'));
             }
+
+            // The remaining part is our clean URL path
+            $path = $request_uri;
         }
 
+        // Clean up the path: trim leading/trailing slashes, filter for URL safety
         $path = filter_var(trim($path, '/'), FILTER_SANITIZE_URL);
+
+        // Split the path into segments
         return explode('/', $path);
     }
 

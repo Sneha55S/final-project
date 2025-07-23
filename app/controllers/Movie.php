@@ -10,7 +10,7 @@ class Movie extends Controller {
 						$movie_title = $_REQUEST['movie'] ?? '';
 
 						if (empty($movie_title)) {
-										header('Location: /index.php?url=movie');
+										header('Location: /movie'); // Changed to clean URL
 										die;
 						}
 
@@ -43,7 +43,7 @@ class Movie extends Controller {
 														} else {
 																		$_SESSION['message'] = ['type' => 'warning', 'text' => 'Please select a valid rating (1-5 stars).'];
 														}
-														header('Location: /index.php?url=movie/search&movie=' . urlencode($movie_title));
+														header('Location: /movie/search?movie=' . urlencode($movie_title)); // Changed to clean URL
 														die;
 										}
 
@@ -51,7 +51,7 @@ class Movie extends Controller {
 
 						} else {
 										$_SESSION['message'] = ['type' => 'error', 'text' => $movie['Error'] ?? 'Movie not found.'];
-										header('Location: /index.php?url=movie');
+										header('Location: /movie'); // Changed to clean URL
 										die;
 						}
 

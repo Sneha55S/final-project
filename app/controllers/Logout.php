@@ -7,6 +7,14 @@ class Logout extends Controller {
             session_start();
         }
 
+        // --- DEBUG: Check if headers have already been sent ---
+        if (headers_sent($file, $line)) {
+            echo "DEBUG: Headers already sent in file $file on line $line. Cannot redirect.<br>";
+            // You might want to log this or display a user-friendly message instead of die() in production
+            die("Logout failed: Output already started before redirect.");
+        }
+        // --- END DEBUG ---
+
         $_SESSION = array(); // Unset all session variables
 
         if (ini_get("session.use_cookies")) {
@@ -19,7 +27,7 @@ class Logout extends Controller {
 
         session_destroy(); // Destroy the session on the server
 
-        header('Location: /index.php?url=login'); // Redirect to the login page
+        header('Location: /login'); // Changed to clean URL
         exit(); // Crucial: Terminate script execution after redirect
     }
 }

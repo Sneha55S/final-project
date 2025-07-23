@@ -48,7 +48,7 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Give Your Rating (1-5 Stars)</h5>
-                        <form method="POST" action="/index.php?url=movie/search&movie=<?php echo urlencode($data['movie']['Title']); ?>" class="row g-3 align-items-center">
+                        <form method="POST" action="/movie/search?movie=<?php echo urlencode($data['movie']['Title']); ?>" class="row g-3 align-items-center"> <!-- Changed to clean URL -->
                             <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID']); ?>">
                             <input type="hidden" name="movie_title" value="<?php echo htmlspecialchars($data['movie']['Title']); ?>">
                             <input type="hidden" name="poster_url" value="<?php echo htmlspecialchars($data['movie']['Poster'] !== 'N/A' ? $data['movie']['Poster'] : ''); ?>">
@@ -100,7 +100,7 @@
         </div>
         <div class="row mt-4">
             <div class="col-12 text-center">
-                <a href="/index.php?url=movie" class="btn btn-secondary">&larr; Search Another Movie</a>
+                <a href="/movie" class="btn btn-secondary">&larr; Search Another Movie</a> <!-- Changed to clean URL -->
             </div>
         </div>
 
