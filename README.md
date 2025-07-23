@@ -1,7 +1,9 @@
 ✨ Cine Review: Your Movie Reviews ✨
 
+
 🎬 Project Overview
 Cine Review is a dynamic web application for movie enthusiasts. It allows users to search for films, view detailed information, explore community ratings, and for logged-in members, to contribute their own ratings and AI-assisted reviews. Built with a clean, minimalistic design, it showcases core web development principles and API integrations.
+
 
 🌟 Key Features
 Movie Search & Details: Find movies and view comprehensive information (poster, plot, cast, etc.) powered by the OMDB API.
@@ -12,6 +14,7 @@ Guests: Can search, view details, and see all ratings/reviews.
 
 Logged-in Users: Can submit ratings and create/edit AI-generated reviews.
 
+
 Interactive Rating & Review System:
 
 Submit 1-5 star ratings.
@@ -20,11 +23,14 @@ Get AI-generated review suggestions (from Google Gemini API) based on your ratin
 
 Edit and post your final review to the database.
 
+
 Community Reviews: See all user-submitted text reviews displayed publicly.
 
 Clean UI & Navigation: Minimalist design with fixed header/footer and intuitive URLs.
 
 Live Footer: Displays current date and time.
+
+
 
 🛠️ Technical Stack
 Backend: PHP (MVC Architecture)
@@ -34,6 +40,8 @@ Database: MySQL / MariaDB (via PDO)
 Frontend: HTML5, CSS3, JavaScript, Bootstrap 5
 
 APIs: OMDB API, Google Gemini API
+
+
 
 🚧 Development Journey: Challenges & Solutions
 
@@ -48,6 +56,8 @@ Dynamic UI for Reviews: Implementing a two-step process for AI review generation
 Database Schema Alignment: Correcting and evolving the database structure to support all application features.
 
 Deployment to PaaS: Transitioning from a local development environment to a production-ready PHP hosting platform.
+
+
 
 🚀 Getting Started
 Clone: Get the project code from GitHub.
