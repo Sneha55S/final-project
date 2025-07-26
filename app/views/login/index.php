@@ -8,10 +8,10 @@
                 </div>
                 <div class="card-body">
                     <?php
-                    // Display messages from the session (e.g., login failed, or successful registration)
+                   
                     if (isset($_SESSION['register_message'])):
                         $message = $_SESSION['register_message'];
-                        unset($_SESSION['register_message']); // Clear message after displaying
+                        unset($_SESSION['register_message']); 
                     ?>
                         <div class="alert alert-<?php echo $message['type'] === 'success' ? 'success' : ($message['type'] === 'error' ? 'danger' : 'warning'); ?> alert-dismissible fade show" role="alert">
                             <strong><?php echo ucfirst($message['type']); ?>!</strong>

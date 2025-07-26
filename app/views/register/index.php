@@ -8,7 +8,7 @@
                 </div>
                 <div class="card-body">
                     <?php
-                    // Display messages from the session
+                    
                     if (isset($data['message'])):
                         $message = $data['message'];
                     ?>

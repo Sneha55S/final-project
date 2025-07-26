@@ -79,7 +79,7 @@
                                 <?php endfor; ?>
                             </div>
                             
-                            <div class="col-12 d-flex flex-column gap-2 mb-3"> <!-- Button moved up -->
+                            <div class="col-12 d-flex flex-column gap-2 mb-3"> 
                                 <button type="submit" name="submit_get_ai_review" id="submit_get_ai_review_button" class="btn btn-success"
                                     <?php echo (empty($user_current_rating) && empty($data['ai_review'])) ? 'disabled' : ''; ?>
                                 >
@@ -88,8 +88,8 @@
                             </div>
 
                             <?php 
-                            // Only show review textarea and Post Review button if a rating has been submitted
-                            // or if an AI review was just generated/user has a saved review
+                           
+                            
                             if (!empty($user_current_rating) || !empty($data['ai_review']) || !empty($data['user_rating']['review_text'])): 
                             ?>
                             <div class="col-12 mb-3">
@@ -112,7 +112,7 @@
                     </div>
                 <?php endif; ?>
 
-                <!-- Section to display all user reviews -->
+                
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title mb-3">User Reviews</h5>
@@ -138,7 +138,7 @@
                         <?php endif; ?>
                     </div>
                 </div>
-                <!-- End User Reviews Section -->
+               
 
             </div>
         </div>
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ratingRadios = document.querySelectorAll('input[name="rating"]');
     const getAiReviewButton = document.getElementById('submit_get_ai_review_button');
 
-    // Function to update button state
+    
     function updateGetAiReviewButtonState() {
         let isRatingSelected = false;
         ratingRadios.forEach(radio => {
@@ -176,12 +176,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Add event listeners to rating radios
+    
     ratingRadios.forEach(radio => {
         radio.addEventListener('change', updateGetAiReviewButtonState);
     });
 
-    // Initial UI update on page load
+    
     updateGetAiReviewButtonState();
 });
 </script>

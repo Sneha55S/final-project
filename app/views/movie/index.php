@@ -25,7 +25,7 @@
             <form action="/movie/search" method="get" >
             <fieldset>
                 <div class="form-group mb-3">
-                    <!-- Removed the redundant label for "Movie" -->
+                    
                     <input required type="text" class="form-control" name="movie" id="movie" placeholder="Search for a movie..." value="<?php echo htmlspecialchars($_GET['movie'] ?? ''); ?>">
                 </div>
                     <button type="submit" class="btn btn-primary">Search</button>
