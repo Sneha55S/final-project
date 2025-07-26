@@ -11,7 +11,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <p class="mb-3">Welcome to your movie hub.</p>
+            <p class="mb-3">Welcome to your Cine Review.</p>
             <ul class="list-unstyled mb-4">
                 <li><a href="/movie">Search for movies</a> (available to everyone)</li>
                 <li>View community ratings and AI-generated reviews (available to everyone)</li>
