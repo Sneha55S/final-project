@@ -1,13 +1,12 @@
 <?php require_once VIEWS . DS . 'templates' . DS . 'header.php' ?>
 <main role="main" class="container fade-in">
 
-    <!-- Banner -->
     <div class="py-4 text-center">
         <h1 class="mb-3 fw-bold"><i class="bi bi-search"></i> Movie Search</h1>
         <p class="lead">Search for your favorite movies and view AI-generated reviews.</p>
     </div>
 
-    <!-- Alert Message -->
+  
     <?php if (isset($_SESSION['message'])):
         $message = $_SESSION['message'];
         unset($_SESSION['message']);
@@ -19,7 +18,7 @@
         </div>
     <?php endif; ?>
 
-    <!-- Search Form -->
+   
     <div class="row justify-content-center">
         <div class="col-md-8">
             <form action="/movie/search" method="get" class="card p-4 shadow-sm border-0 bg-white">

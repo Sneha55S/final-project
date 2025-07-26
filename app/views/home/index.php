@@ -2,7 +2,7 @@
 <div class="container my-5">
     <div class="text-center fade-in">
         <h1 class="display-5 fw-bold mb-3">
-            Hi, <?php echo htmlspecialchars($_SESSION['username'] ?? 'Guest'); ?>!
+          Hi, <?php echo htmlspecialchars($_SESSION['username'] ?? 'Guest'); ?>!
         </h1>
         <p class="lead mb-4">Welcome to <strong>Cine Review</strong>, your personalized movie hub.</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-4">
