@@ -1,13 +1,13 @@
-    <?php // This must be the absolute first thing in the file, no character before it!
+    <?php
 
-    // Get the current URI path for conditional redirects
+    
     $current_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-    // For Replit, we need to handle the base path if the app isn't at the root
-    $script_name = $_SERVER['SCRIPT_NAME']; // e.g., /index.php
-    $base_path = dirname($script_name); // e.g., / or /my-replit-name
+    
+    $script_name = $_SERVER['SCRIPT_NAME']; 
+    $base_path = dirname($script_name); 
 
-    // Remove base path and index.php from the URI for routing comparison
+    
     $current_route = $current_uri;
     if ($base_path !== '/' && strpos($current_route, $base_path) === 0) {
         $current_route = substr($current_route, strlen($base_path));
@@ -15,13 +15,13 @@
     if (strpos($current_route, '/index.php') === 0) {
         $current_route = substr($current_route, strlen('/index.php'));
     }
-    $current_route = trim($current_route, '/'); // Remove leading/trailing slashes
+    $current_route = trim($current_route, '/'); 
 
-    // Extract the first segment as the controller
+    
     $current_controller = explode('/', $current_route)[0] ?? '';
-    // Handle empty controller for root path
+    
     if (empty($current_controller)) {
-        $current_controller = 'home'; // Default controller
+        $current_controller = 'home'; 
     }
 
 
