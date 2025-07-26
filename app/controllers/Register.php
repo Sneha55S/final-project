@@ -3,9 +3,9 @@
 class Register extends Controller {
 
     public function index() {
-        // Display the registration form
+        
         $data = ['message' => $_SESSION['register_message'] ?? null];
-        unset($_SESSION['register_message']); // Clear message after displaying
+        unset($_SESSION['register_message']); 
         $this->view('register/index', $data);
     }
 
@@ -17,7 +17,7 @@ class Register extends Controller {
 
             $userModel = $this->model('User');
 
-            // Basic validation
+            
             if (empty($username) || empty($password) || empty($confirm_password)) {
                 $_SESSION['register_message'] = ['type' => 'error', 'text' => 'All fields are required.'];
                 header('Location: /register');
@@ -36,7 +36,7 @@ class Register extends Controller {
                 exit();
             }
 
-            // Attempt to create the user
+            
             $result = $userModel->create($username, $password);
 
             if ($result === 'exists') {
@@ -45,7 +45,7 @@ class Register extends Controller {
                 exit();
             } elseif ($result) {
                 $_SESSION['register_message'] = ['type' => 'success', 'text' => 'Registration successful! You can now log in.'];
-                header('Location: /login'); // Redirect to login page after successful registration
+                header('Location: /login'); 
                 exit();
             } else {
                 $_SESSION['register_message'] = ['type' => 'error', 'text' => 'Registration failed. Please try again.'];
@@ -53,7 +53,7 @@ class Register extends Controller {
                 exit();
             }
         } else {
-            // If not a POST request, redirect to the registration form
+            
             header('Location: /register');
             exit();
         }

@@ -6,10 +6,10 @@ class Logout extends Controller {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-
-        -
+        
         if (headers_sent($file, $line)) {
             echo "DEBUG: Headers already sent in file $file on line $line. Cannot redirect.<br>";
+
 
             die("Logout failed: Output already started before redirect.");
         }
@@ -27,7 +27,9 @@ class Logout extends Controller {
 
         session_destroy(); 
 
+
         header('Location: /login'); 
+
         exit(); 
     }
 }
