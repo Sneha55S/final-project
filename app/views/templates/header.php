@@ -36,7 +36,7 @@ if (!isset($_SESSION['auth'])) {
     <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-        <!-- ✅ Bootstrap Icons -->
+        
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
         <link rel="icon" href="https://placehold.co/32x32/2c3e50/ecf0f1?text=CR" type="image/png"> 
