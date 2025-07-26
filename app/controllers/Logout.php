@@ -28,7 +28,7 @@ class Logout extends Controller {
         session_destroy(); 
 
 
-        header('Location: /login'); 
+        header('Location:/home/index'); 
 
         exit(); 
     }
