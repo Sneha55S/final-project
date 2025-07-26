@@ -80,7 +80,7 @@ class Rating {
             $statement = $db->prepare("SELECT user_identifier, rating, review_text, created_at FROM ratings WHERE imdb_id = :imdb_id AND review_text IS NOT NULL AND review_text != ''");
             $statement->bindValue(':imdb_id', $imdbId);
             $statement->execute();
-            return $statement->fetchAll(PDO::FETCH_ASSOC); // Returns all reviews
+            return $statement->fetchAll(PDO::FETCH_ASSOC); 
         } catch (PDOException $e) {
             error_log("Database error getting all reviews: " . $e->getMessage());
             return [];
