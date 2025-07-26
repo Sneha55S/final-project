@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="mb-1">Hi, <?php echo htmlspecialchars($_SESSION['username'] ?? 'Guest'); ?>!</h1>
-                <!-- Removed the <p> tag that used to contain the date -->
+                
             </div>
         </div>
     </div>
