@@ -1,7 +1,7 @@
 <?php
 if (isset($_SESSION['auth']) == 1) {
     header('Location: /home');
-    exit(); // Always exit after header redirect
+    exit(); 
 }
 ?><!DOCTYPE html>
 <html lang="en">
