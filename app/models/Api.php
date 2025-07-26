@@ -17,7 +17,7 @@ class Api {
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL, $query_url);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				// Removed: curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enabled SSL verification by removing this line
+				
 
 				$json = curl_exec($ch);
 				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -32,19 +32,14 @@ class Api {
 				return $phpObj;
 		}
 
-		/**
-		 * Generates an AI review using the Google Gemini API, now considering the user's rating.
-		 * @param string $movieTitle The title of the movie.
-		 * @param string $plot The plot/summary of the movie.
-		 * @param int $rating The rating given by the user (1-5).
-		 * @return string The AI-generated review, or an error message.
-		 */
+		
+		 
 		public function generate_ai_review($movieTitle, $plot, $rating) {
 				if (!isset($_ENV['GEMINI_KEY'])) {
 						return "Error: Gemini API Key is not set.";
 				}
 
-				// Construct the prompt to include the rating
+				
 				$prompt = "Write a concise movie review for the film '{$movieTitle}'. The user gave it a rating of {$rating} out of 5 stars. Reflect this rating in the tone and content of the review. Plot summary: '{$plot}'";
 
 				$payload = json_encode([
@@ -68,7 +63,7 @@ class Api {
 				curl_setopt($ch, CURLOPT_POST, true);
 				curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-				// Removed: curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enabled SSL verification by removing this line
+				
 
 				$response = curl_exec($ch);
 				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
