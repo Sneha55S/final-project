@@ -33,5 +33,5 @@
         </div>
     </div>
 
-</div> <!-- Close container -->
+</div> 
 <?php require_once VIEWS . DS . 'templates' . DS . 'footer.php' ?>
